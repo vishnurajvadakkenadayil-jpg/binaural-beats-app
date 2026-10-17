@@ -155,6 +155,20 @@ fun HomeScreen(
                 ) {
                     HeroVisual(palette = featuredPalette, sizeDp = 190)
                 }
+                // readability scrim: darkens the lower part of the card so the text stands out
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    Color(0x66101F20),
+                                    Color(0xF2101F20)
+                                )
+                            )
+                        )
+                )
                 Column(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
@@ -177,14 +191,15 @@ fun HomeScreen(
                     )
                     Text(
                         text = featuredDescription,
-                        color = Color(0xFFAAADAE),
-                        fontSize = 12.sp,
-                        lineHeight = 18.sp,
+                        color = Color(0xFFEDEFEF),
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Medium,
+                        lineHeight = 19.sp,
                         modifier = Modifier.padding(top = 8.dp, end = 30.dp)
                     )
                     Text(
                         text = featuredMeta,
-                        color = Color(0xFF777C7D),
+                        color = Color(0xFFB9BEBF),
                         fontSize = 10.sp,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(top = 10.dp)
