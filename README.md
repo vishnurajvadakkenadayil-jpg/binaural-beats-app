@@ -2,7 +2,7 @@
 
 An Android app for focus, relaxation and sleep. It generates binaural beats and pure Solfeggio tones in real time, layers them with soft ambient sound, and wraps everything in a dark, color-themed interface.
 
-**[Download the APK (v1.0)](https://github.com/vishnurajvadakkenadayil-jpg/binaural-beats-app/releases/tag/v1.0)**
+**[Download the APK (v1.1)](https://github.com/vishnurajvadakkenadayil-jpg/binaural-beats-app/releases/tag/v1.1)**
 
 ## Screenshots
 
@@ -42,7 +42,7 @@ Audio is not played from prerecorded tone files. The app synthesizes the left an
 
 ## Install
 
-1. Download `BinauralBeats-v1.0.apk` from the [Releases page](https://github.com/vishnurajvadakkenadayil-jpg/binaural-beats-app/releases/tag/v1.0)
+1. Download `BinauralBeats-v1.0.apk` from the [Releases page](https://github.com/vishnurajvadakkenadayil-jpg/binaural-beats-app/releases/tag/v1.1)
 2. Open it on your Android phone
 3. If asked, allow "Install unknown apps" for your browser or file manager
 4. Use stereo headphones, since the binaural effect needs a different tone in each ear
