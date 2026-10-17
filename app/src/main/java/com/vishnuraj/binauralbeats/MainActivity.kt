@@ -1,6 +1,13 @@
 package com.vishnuraj.binauralbeats
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.core.content.ContextCompat
 import android.os.Handler
 import android.os.Looper
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -67,6 +74,8 @@ private val SpotifyDarkColors = darkColorScheme(
 
 class MainActivity : ComponentActivity() {
     private lateinit var audioEngine: AudioEngine
+    private val notificationPermission =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { }
     private val authManager = AuthManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,6 +87,14 @@ class MainActivity : ComponentActivity() {
         Handler(Looper.getMainLooper()).postDelayed({ keepSplash = false }, 1200)
 
         audioEngine = AudioEngine(this)
+
+        // Android 13+ needs permission to show the playback notification.
+        if (Build.VERSION.SDK_INT >= 33 &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            notificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
 
         val modes = listOf(
             Mode("Sleep", 200.0, 206.0, NoiseType.PINK, 0.10, R.raw.sleep_ambient, 0.35f, Color(0xFF4A6FA5), 5, "This mode plays a slow theta-range binaural beat, layered under a steady rain soundscape. Theta rhythms are commonly associated with a deeply relaxed, drowsy state, so beats in this range are commonly used to help ease the mind toward rest. The rain layer beneath the tone is meant to mask sudden noises around you and give your mind something soft and steady to settle into. For best results, use stereo headphones or earbuds, since the binaural effect depends on each ear receiving a slightly different tone. Try dimming the lights and putting your phone aside once playback starts, rather than continuing to scroll. This is meant purely as a relaxation aid, not a substitute for proper sleep hygiene or medical treatment for insomnia."),
@@ -160,6 +177,31 @@ class MainActivity : ComponentActivity() {
                 }
 
                 TimerEffects(timerState) { if (isPlaying) togglePlayback() }
+
+                // Notification buttons call back into the app through this bridge.
+                DisposableEffect(Unit) {
+                    PlaybackBridge.onToggle = { togglePlayback() }
+                    PlaybackBridge.onClose = { if (isPlaying) togglePlayback() }
+                    PlaybackBridge.isPlaying = { isPlaying }
+                    onDispose {
+                        PlaybackBridge.onToggle = null
+                        PlaybackBridge.onClose = null
+                        PlaybackBridge.isPlaying = null
+                    }
+                }
+
+                // Keep the notification in sync with what is playing.
+                LaunchedEffect(isPlaying, currentSession?.name) {
+                    val session = currentSession
+                    if (session != null) {
+                        PlaybackService.update(
+                            this@MainActivity,
+                            session.name,
+                            frequencyLabelFor(session),
+                            isPlaying
+                        )
+                    }
+                }
 
                BackHandler(enabled = showNowPlaying || showSolfeggio) {
                     showNowPlaying = false
@@ -252,6 +294,7 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         audioEngine.stop()
+        PlaybackService.stop(this)
     }
 }
 
