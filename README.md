@@ -62,4 +62,4 @@ This app is intended for relaxation and personal listening, not as medical treat
 
 ## Author
 
-Vishnuraj V M, B.Tech CSE student at CUSAT Kochi.
+Vishnuraj V M, B.Tech CSE student at CUSAT.
